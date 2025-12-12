@@ -1,4 +1,8 @@
 node_modules
 .git
+.gitignore
 .env
-*.log
+npm-debug.log
+Dockerfile
+docker-compose.yml
+coverage
