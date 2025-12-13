@@ -1,16 +1,20 @@
-﻿# Use Debian-based Node for reliable I/O
-FROM node:18-bullseye-slim
+﻿# Base image
+FROM node:18
 
-RUN apt-get update && apt-get install -y python3 make g++ git ca-certificates --no-install-recommends && rm -rf /var/lib/apt/lists/*
-
+# Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies (use legacy to avoid peer resolution failures)
-COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps
+# Copy package files first
+COPY package*.json ./
 
-# Copy project including precompiled artifacts/cache (these must exist locally)
+# Install dependencies
+RUN npm install
+
+# Copy project files
 COPY . .
 
-# Run tests without compiling (use precompiled artifacts so Hardhat won't download compilers)
-CMD ["npx", "hardhat", "test", "--no-compile"]
+# Compile contracts
+RUN npx hardhat compile
+
+# Default command
+CMD ["npx", "hardhat", "test"]
